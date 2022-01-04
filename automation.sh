@@ -36,3 +36,25 @@ tar -cvf /tmp/${myname}-httpd-logs-${timestamp}.tar *.log -C /tmp
 aws s3 \
 cp /tmp/${myname}-httpd-logs-${timestamp}.tar \
 s3://${s3_bucket}/${myname}-httpd-logs-${timestamp}.tar
+
+#Below code will create the inventoryfile if file does not exist.
+inventory_file="/var/www/html/inventory.html"
+size=$(sudo du -sh /tmp/${myname}-httpd-logs-${timestamp}.tar | awk '{print $1}')
+if [ -e /var/www/html/inventory.html ]
+then
+        echo "Inventory file already exist"
+else
+        touch /var/www/html/inventory.html
+	echo -e "Log Type \tTime Created \t\tType \tSize" >> /var/www/html/inventory.html
+fi
+echo -e "httpd-logs \t$timestamp \ttar \t${size}" >> /var/www/html/inventory.html
+
+# Schedule Cron Job
+if [ -e /etc/cron.d/automation ]
+then
+        echo "Cron job already exists"
+else
+        touch /etc/cron.d/automation
+        echo "0 0 * * * root /root/Automation_Project/automation.sh" > /etc/cron.d/automation
+        echo "Cron job added"
+fi
