@@ -1,4 +1,3 @@
-
 timestamp=$(date '+%d%m%Y-%H%M%S')
 s3_bucket="upgrad-ankita"
 myname=Ankita
